@@ -3,7 +3,7 @@
 
 Así he creado el **repositorio local** con *git*:
 
-'arantxa@debian:~$ git init prueba2_arantxa
+`arantxa@debian:~$ git init prueba2_arantxa
 ayuda: Using 'master' as the name for the initial branch. This default branch name
 ayuda: is subject to change. To configure the initial branch name to use in all
 ayuda: of your new repositories, which will suppress this warning, call:
@@ -26,7 +26,7 @@ arantxa@debian:~/prueba2_arantxa$ git commit -m "He creado un archivo con el pro
 [master (commit-raíz) ee32a6f] He creado un archivo con el proceso de creacion
  1 file changed, 1 insertion(+)
  create mode 100644 creacion.txt
-'
+`
 
 Creo un repositorio en Github con el mismo nombre y hago los siguientes pasos:
 
