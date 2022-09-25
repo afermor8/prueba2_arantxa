@@ -1,6 +1,15 @@
 # Git y Github
 ## Creación de un repositorio local
 
+| **VENTAJAS** | **DESVENTAJAS** |
+|--------------|-----------------|
+| Integridad de la información | Aprendizaje |
+| Velocidad |
+| Ramificación |
+| Flujo de trabajo adaptable |
+| Seguridad |
+| Coste |
+
 Para crear un *repositorio local* en **git** he realizado los siguientes pasos:
 
 1. En la terminal linux con el comando `git init <nombre_repositorio>` creo un repositorio:
@@ -32,12 +41,3 @@ Y ya estaría creado en **Github** sincronizado con el *repositorio local*.
 Enlaces:
 - Click [aquí](https://github.com/afermor8/prueba2_arantxa) para ir al enlace del repositorio creado en Github.
 - En este [enlace](markdown2.md) podemos ver otro fichero tipo markdown. 
-
-| **VENTAJAS** | **DESVENTAJAS** |
-|--------------|-----------------|
-| Integridad de la información | Aprendizaje |
-| Velocidad |
-| Ramificación |
-| Flujo de trabajo adaptable |
-| Seguridad |
-| Coste |
