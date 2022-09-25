@@ -1,9 +1,13 @@
 # Git y Github
 ## Creación de un repositorio local
 
-Así he creado el *repositorio local* con **git**:
+Para crear un *repositorio local* en **git** he realizado los siguientes pasos:
+
+1. En la terminal linux con el comando `git init <nombre_repositorio>` creo un repositorio:
 
 `arantxa@debian:~$ git init prueba2_arantxa`
+
+2. En este repositorio he creado un fichero llamado *creacion.txt*.
 
 `arantxa@debian:~$ cd prueba2_arantxa/`
 
@@ -11,9 +15,9 @@ Así he creado el *repositorio local* con **git**:
 
 `arantxa@debian:~/prueba2_arantxa$ git add .`
 
-`arantxa@debian:~/prueba2_arantxa$ git commit -m "He creado un archivo con el proceso de creacion"`
+`arantxa@debian:~/prueba2_arantxa$ git commit -m "He creado el fichero creacion.txt"`
 
-Creo un repositorio en **Github** con el mismo nombre (prueba2_arantxa) y realizo los siguientes pasos:
+3. Creo un repositorio en **Github** con el mismo nombre (prueba2_arantxa) y realizo los siguientes pasos:
 
 `arantxa@debian:~/prueba2_arantxa$ git branch -M main`
 
@@ -21,8 +25,7 @@ Creo un repositorio en **Github** con el mismo nombre (prueba2_arantxa) y realiz
 
 `arantxa@debian:~/prueba2_arantxa$ git push -u origin main`
 
-
-Y ya estaría creado en Github sincronizado con el repositorio local.
+Y ya estaría creado en **Github** sincronizado con el *repositorio local*.
 
 ![alt text](capturagitlocal.png)
 
