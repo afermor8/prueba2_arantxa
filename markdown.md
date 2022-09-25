@@ -29,4 +29,6 @@ Y ya estaría creado en **Github** sincronizado con el *repositorio local*.
 
 ![alt text](capturagitlocal.png)
 
-Click [aquí](https://github.com/afermor8/prueba2_arantxa) para ir al enlace del repositorio creado en Github.
+Enlaces:
+- Click [aquí](https://github.com/afermor8/prueba2_arantxa) para ir al enlace del repositorio creado en Github.
+- En este [enlace](markdown2.md) podemos ver otro fichero tipo markdown. 
