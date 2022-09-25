@@ -1,3 +1,3 @@
-#H1 Markdown
+# Markdown
 
 Este es un fichero markdown creado como prueba.
