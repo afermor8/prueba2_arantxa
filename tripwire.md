@@ -97,8 +97,6 @@ La sintaxis de las directivas es la siguiente:
 El nombre de la directiva será _section_, _ifhost...else...endif_, _print_, _error_ o _end_.
 
 
-******Añadir captura del fichero de políticas por defecto como ejemplo
-
 
 ## Instalación del fichero de políticas y de configuración
 
