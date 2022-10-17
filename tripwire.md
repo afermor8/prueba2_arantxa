@@ -102,23 +102,27 @@ El nombre de la directiva será _section_, _ifhost...else...endif_, _print_, _er
 ## Instalación del fichero de políticas y de configuración
 
 En el caso de que la configuración de los ficheros y las claves no se haya hecho durante la instalción en Debian se deberá hacer manualmente.
-Para definir las claves, ejecutar desde el directorio /etc/tripwire el siguiente comando:
+Para definir las claves, ejecutar **desde el directorio /etc/tripwire** el siguiente comando:
 
 `sudo twadmin --generate-keys --site-keyfile site.key --site-passphrase 'INSERTAR LA CONTRASEÑA'`
 
 `sudo twadmin --generate-keys --local-keyfile $(hostname_del_equipo)-local.key --local-passphrase 'INSTRAR LA CONTRASEÑA'`
 
-Generar los ficheros tw.cfg y tw.pol:
+Si ya estuvieran configuradas las claves pasamos directamente a este paso. Generamos los ficheros tw.cfg y tw.pol del siguiente modo:
 
-`sudo twadmin -m P /etc/tripwire/twpol.txt`
+`sudo twadmin -m F -S /etc/tripwire/site.key /etc/tripwire/twcfg.txt`
 
-`sudo twadmin -m F /etc/tripwire/twcfg.txt`
+`sudo twadmin -m P -S /etc/tripwire/site.key /etc/tripwire/twpol.txt`
+
+![crear-ficheros](/capturas/2tripwire-fich.png)
 
 ## Creación de la base de datos
 
-Creamos la base de datos e indicamos que se guarde en un fichero si se produce un error.
+Creamos la base de datos.
 
-`sudo tripwire -m -i 2 > /tmp/mensaje_si_error`
+`sudo tripwire -m i`
+
+![crear-bd](/capturas/3tripwire-bd.png)
 
 ## Comprobación de la integridad de ficheros
 
@@ -126,26 +130,150 @@ Se puede realizar una comprobación con el siguiente comando:
 
 `sudo tripwire -m c`
 
-Y si nos menciona algún fichero o directorio se puede ver el informe detallado con:
+![scan](/capturas/4tripwire-int.png)
 
-`sudo twprint -m r -r /var/lib/tripwire/report/<nombre>.twr`
+![scan2](/capturas/4tripwire-int2.png)
+
+![scan3](/capturas/4tripwire-int3.png)
+
+El informe detallado de la comprobación se puede ver con:
+
+`sudo twprint -m r -r /var/lib/tripwire/report/debianprueba-20221016-195327.twr`
 
 > -m r indica a tripwire que descifre el informe y -r el nombre del informe a descifrar
+> debianprueba-20221016-195327 es el nombre del informe creado. Se puede entrar en el directorio /var/lib/tripwire/report/ para ver el nombre del informe que se haya creado en tu máquina.
 
 
 ## Actualización de la base de datos
 
 Para actualizar la base de datos y acepte las modificaciones que son legítimas (las que hemos hecho nosotros por ejemplo) se debe usar el siguiente comando.
 
-`sudo tripwire -m u -r /var/lib/tripwire/report/<nombre>.twr` 
+`sudo tripwire -m u -r /var/lib/tripwire/report/debianprueba-20221016-195327.twr` 
 
-Podemos ver la información de un fichero de la base de datos de la siguiente forma.
+Podemos marcar qué cambios queremos aceptar y cuáles no queremos cambiar en la base de datos.
 
-`sudo twprint -m d -d /var/lib/tripwire/<nombre>.twd <fichero>`
+![update](/capturas/5tripwire-update.png)
+
+Al salir se guardan los cambios (nos pide la clave local).
+
+![save-updates](/capturas/6.tripwire-cambios-guardados.png)
 
 Para ver todo el contenido de la base de datos:
 
-`sudo twprint -m d -d /var/lib/tripwire/<nombre>.twd`
+`sudo twprint -m d -d /var/lib/tripwire/debianprueba.twd`
+
+Con el comando anterior nos aparecerá muchísima información por lo que podemos ver solo la información de un fichero de la base de datos de la siguiente forma.
+
+`sudo twprint -m d -d /var/lib/tripwire/debianprueba.twd nombre_fichero`
+
+![ejemplo](/capturas/7tripwire-ej.png)
+
+## Avisos por correos electrónicos
+
+Antes debemos saber que el servidor de correo por defecto en Tripwire es Postfix. Tendremos que configurarlo para que nos permita mandar correos electrónicos. 
+Instalamos postfix y mailutils  si no los tenemos instalados.
+
+`sudo apt install postfix mailutils` 
+
+En el directorio **/etc/postfix** creamos sasl_passwd.
+
+`sudo nano /etc/postfix/sasl_passwd`
+
+Añadimos al fichero creado lo siguiente para un servidor Gmail:
+
+`[smtp.gmail.com]:587 correo@gmail.com:contraseña-correo`
+
+Establecemos la seguridad para este fichero:
+
+`sudo chmod 600 /etc/postfix/sasl_passwd`
+
+`sudo chown root:root /etc/postfix/sasl_passwd`
+
+Creamos el fichero tls_policy.
+
+`sudo nano /etc/postfix/tls_policy`
+
+Le añadimos lo siguiente para un servidor Gmail.
+
+`[smtp.gmail.com]:587 encrypt`
+
+Le damos a este fichero los siguientes permisos:
+
+`sudo chmod 600 /etc/postfix/tls_policy`
+
+`sudo chown root:root /etc/postfix/tls_policy`
+
+Añadimos la configuración a main.cf.
+
+`sudo nano /etc/postfix/main.cf`
+
+```
+myhostname = debianprueba
+relayhost = [smtp.gmail.com]:587
+smtp_sasl_auth_enable = yes
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+smtp_tls_policy_maps = hash:/etc/postfix/tls_policy
+smtp_sasl_security_options = noanonymous
+smtp_use_tls = yes
+smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
+smtp_tls_security_level = encrypt
+```
+
+Se convierten lo dos ficheros a hash. Se crearán los ficheros sasl_passwd.db y tls_policy.db:
+
+`sudo postmap /etc/postfix/sasl_passwd`
+
+`sudo postmap /etc/postfix/tls_policy`
+
+Se reinicia el proceso:
+
+`sudo systemctl restart postfix`
+
+Y ya debería funcionar. Podemos hacer una prueba para comprobarlo.
+
+`echo "prueba de envío" | mail -s "Esto es una prueba" ara.fer.mor@gmail.com`
+
+![prueba-mail](/capturas/prueba-mail.png)
+
+
+### Correo desde Tripwire.
+
+En el fichero de configuración de las políticas twpol.txt se debe añadir la opción **emailto = correo@correo.com**.
+
+![twpol-emailto](/capturas/8tripwire-mail.png)
+
+Y en el fichero *twcfg.txt* se debe añadir el **SMTPHOST** y **SMTPPORT**, quedando de la siguiente manera:
+
+```
+MAILMETHOD    =SENDMAIL
+SMTPHOST      =smtp.gmail.com
+SMTPPORT      =587
+MAILPROGRAM   =/usr/lib/sendmail -oi -t
+```
+
+Una vez hecho estos cambios se debe generar de nuevo los ficheros tw.pol y tw.cfg.
+
+`sudo twadmin -m P -S /etc/tripwire/site.key /etc/tripwire/twpol.txt`
+
+`sudo twadmin -m F -S /etc/tripwire/site.key /etc/tripwire/twcfg.txt`
+
+Para comprobar que funciona usar el siguiente comando para enviar un mensaje de prueba.
+
+`sudo tripwire -m t -e ara.fer.mor@gmail.com`
+
+![prueba-recibida](/capturas/tripwire-mail.png)
+
+
+## Tripwire desatendida
+
+Mediante Crontab podemos hacer que nos se hagan los chequeos automáticamente y se nos envíe un correo del siguiente modo.
+
+`sudo crontab -e -u root`
+
+Y añadimos la siguiente línea:
+
+`0 0 * * * tripwire --check --email-report`
+
 
 
 ## Páginas webs consultadas
