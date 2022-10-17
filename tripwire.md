@@ -96,6 +96,7 @@ La sintaxis de las directivas es la siguiente:
 
 El nombre de la directiva será _section_, _ifhost...else...endif_, _print_, _error_ o _end_.
 
+![twpol](/capturas/1tripwire-twpol.png)
 
 
 ## Instalación del fichero de políticas y de configuración
