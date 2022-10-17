@@ -1,6 +1,6 @@
 # Rootkit Hunter (rkhunter).
 
-## instalación
+## Instalación
 
 Rkhunter es un script de shell disponible en sistemas operativos de tipo UNIX, como GNU/Linux y sus distribuciones. Esta herramienta analiza los sistemas buscando la presencia de rootkits, backdoors, sniffers y exploits conocidos y desconocidos.
 
@@ -13,7 +13,7 @@ Comprueba:
 - Los archivos ocultos en los directorios del sistema
 - Y, opcionalmente, puede escanear dentro de los archivos
 
-> Usar rkhunter solo no garantiza que un sistema no se vea comprometido. Se recomienda ejecutar pruebas adicionales, como chkrootkit.
+Usar rkhunter solo no garantiza que un sistema no se vea comprometido. Se recomienda ejecutar pruebas adicionales, como chkrootkit.
 
 Para instalar rkhunter:
 
@@ -36,16 +36,22 @@ El archivo de configuración de rkhunter se ubica en /etc/rkhunter.conf.
 Para que rkhunter use cualquier mirror he cambiado la opción **MIRRORS_MODE** a "0".
 La opción **UPDATE_MIRRORS** la he puesto en "1" para que cuando se utilice --update el fichero mirrors sea actualizado si es necesario.
 
+![mirrors](/capturas/3rkhunter-mirrors.png)
+
 - Web_cmd.  
 Esta opción está por defecto del siguiente modo: `WEB_CMD="/bin/false"`
 Lo he cambiado a `WEB_CMD=""` para que permita a rkhunter hacer actualizaciones de los mirrors. La opción por defecto bloquea el acceso a los mirror por razones de seguridad.
 
 - Correo electrónico.  
-Para que rkunter envíe un mensaje si se encuentra con una advertencia durante la comprobación del sistema habrá que añadir a la opción **MAIL-ON-WARNING=** un correo de contacto (o varios separándolos con un espacio).
-En **MAIL_CMD** he cambiado la forma de enviar el correo electrónico mediante el servidor de correo msmtp.
+Para que rkunter envíe un mensaje si se encuentra con una advertencia durante la comprobación del sistema habrá que añadir a la opción **MAIL-ON-WARNING=** un correo de contacto (o varios separándolos con un espacio).La opción **"MAIL_CMD"** debe estar descomentada y poner lo siguiente.
 
-`MAIL_CMD=echo "Subject: [rkhunter] Warnings found for ${HOST_NAME}" | msmtp  ara.fer.mor@gmail.com`
+`MAIL_CMD=mail -s "[rkhunter] Warnings found for ${HOST_NAME}" ara.fer.mor@gmail.com`
 
+![mail-cmd](/capturas/10rkhunter-mail.png)
+
+Al escanear el sistema, si hubiera Warnings nos llegaría el siguiente mensaje:
+
+![prueba-mail](/capturas/rkhunter-mail2.png)
 
 Si se realizan cambios en la configuración se debe usar el siguiente comando para que los cambios se apliquen.
 
@@ -70,6 +76,7 @@ Para actualizar las propiedades de los archivos:
 
 `sudo rkhunter --propupd`
 
+![update-propupd](/capturas/4rkhunter-update.png)
 
 
 
@@ -83,37 +90,47 @@ Para iniciar el escaneo:
 
 `sudo rkhunter --check`
 
-Cuando finalice la primera etapa de escaneo de malware en los binarios presionamos *Enter*. Continua con la búsqueda de rootkits en el sistema de archivos. Cada vez que termine una etapa deberemos confirmar presionando Enter. Las siguientes etapas son escaneos adicionales sobre el sistema de archivos y módulos del kernel en búsqueda de backdoors, rootkits y malwares en general, y el escaneo de las redes y localhost.
+![scan-rkhunter](/capturas/5rkhunter-scan.png)
+
+Para que, durante el escaneo, nos aparezcan solo los Warning podemos usar:
+
+`sudo rkhunter -c --rwo`
+
+![rwo](/capturas/9rkhunter-rwo.png)
+
+Cuando finalice la primera etapa de escaneo de malware en los binarios presionamos *Enter*. Continua con la búsqueda de rootkits en el sistema de archivos. Cada vez que termine una etapa deberemos confirmar presionando *Enter*. Las siguientes etapas son escaneos adicionales sobre el sistema de archivos y módulos del kernel en búsqueda de backdoors, rootkits y malwares en general, y el escaneo de las redes y localhost.
+
+![enter](/capturas/6rkhunter-enter.png)
+
 Si queremos que no nos vaya preguntando podemos usar la opción:
 
 `rkhunter -c -sk`
 
 Cuando termine nos aparecerán los resultados de la búsqueda.
 
-Toda la información del proceso de escaneo se guardará en el fichero /var/log/rkhunter.log.
+![results](/capturas/7rkhunt-results.png)
+
+Toda la información del proceso de escaneo se guardará en el fichero **/var/log/rkhunter.log**.
 
 `sudo cat /var/log/rkhunter.log`
 
-*Usando grep podemos por ejemplo ver solo la información de los Warnings del resultado del escaneo.
+Usando grep podemos por ejemplo ver solo la información de los Warnings del resultado del escaneo.
 
 `sudo grep -i warning /var/log/rkhunter.log`
 
-Para que nos aparezcan solo los Warning al hacer el escaneo podemos usar:
-
-`sudo rkhunter -c --rwo`.
+![warnings](/capturas/8rkhunter-warning.png)
 
 
 
 ## Actualizaciones y análisis desatendidos
 
-- Fichero /etc/default/rkhunter.  
-Desde el fichero **/etc/default/rkhunter** cron ejecutará el script todos los días para escanear y actualizar.
-Se puede habilitar las comprobaciones de análisis de Rkhunter configurando **CRON_DAILY_RUN** en "yes" para que se ejecute diariamente.
-También se puede establecer **CRON_DB_UPDATE** para habilitar las actualizaciones semanales de la base de datos.
-Otra opción es establecer el valor de **APT_AUTOGEN** si se desea habilitar las actualizaciones automáticas de la base de datos.
+- Fichero **/etc/default/rkhunter**.  
+Desde el fichero */etc/default/rkhunter*, Cron ejecutará el script todos los días para escanear y actualizar. Se pueden habilitar las comprobaciones de análisis de Rkhunter configurando **CRON_DAILY_RUN** en "yes" para que se ejecute diariamente. También se puede establecer **CRON_DB_UPDATE** para habilitar las actualizaciones semanales de la base de datos. Otra opción es establecer el valor de **APT_AUTOGEN** si se desea habilitar las actualizaciones automáticas de la base de datos.
+
+![cron-rkhunter](/capturas/2rkhunter-cron.png)
 
 - Crontab:  
-Desde cron podemos hacer que las actualizaciones y los escaneos se hagan de forma automática todos los días a cierta hora editando crontab para añadir la tarea.
+Desde Crontab podemos hacer que las actualizaciones y los escaneos se hagan de forma automática todos los días a cierta hora editando Crontab para añadir la tarea.
 
 `sudo crontab -u root -e`
 
